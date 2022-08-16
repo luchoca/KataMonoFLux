@@ -1,0 +1,182 @@
+Flux<String> emptyFlux() {
+		return Flux.empty();
+	}
+
+
+	// TODO Return a Flux that contains 2 values "foo" and "bar" without using an array or a collection
+	Flux<String> fooBarFluxFromValues() {
+		return Flux.just("foo", "bar");
+	}
+
+
+	// TODO Create a Flux from a List that contains 2 values "foo" and "bar"
+	Flux<String> fooBarFluxFromList() {
+		return Flux.fromIterable(List.of("foo", "bar"));
+	}
+
+
+	// TODO Create a Flux that emits an IllegalStateException
+	Flux<String> errorFlux() {
+		return Flux.error(new IllegalStateException("ta todo mal"));
+	}
+
+
+
+	// TODO Create a Flux that emits increasing values from 0 to 9 each 100ms
+	Flux<Long> counter() {
+		return Flux.interval(Duration.ofMillis(100)).take(10);
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/ TODO Return an empty Mono
+	Mono<String> emptyMono() {
+		return Mono.empty();
+	}
+
+//========================================================================================
+
+	// TODO Return a Mono that never emits any signal
+	Mono<String> monoWithNoSignal() {
+		return Mono.never();
+	}
+
+//========================================================================================
+
+	// TODO Return a Mono that contains a "foo" value
+	Mono<String> fooMono() {
+		return Mono.just("foo");
+	}
+
+//========================================================================================
+
+	// TODO Create a Mono that emits an IllegalStateException
+	Mono<String> errorMono() {
+		return Mono.error(new IllegalStateException("ta todo mal"));
+	}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+void expectFooBarComplete(Flux<String> flux) {
+		StepVerifier.create(flux)
+				.expectNext("foo","bar")
+				.verifyComplete();
+	}
+
+//========================================================================================
+
+	// TODO Use StepVerifier to check that the flux parameter emits "foo" and "bar" elements then a RuntimeException error.
+	void expectFooBarError(Flux<String> flux) {
+		StepVerifier.create(flux)
+				.expectNext("foo","bar")
+				.verifyError(RuntimeException.class);
+	}
+
+//========================================================================================
+
+	// TODO Use StepVerifier to check that the flux parameter emits a User with "swhite"username
+	// and another one with "jpinkman" then completes successfully.
+	void expectSkylerJesseComplete(Flux<User> flux) {
+		StepVerifier.create(flux)
+				.expectNextMatches(user -> user.getUsername().equals("swhite"))
+				.expectNextMatches(user -> user.getUsername().equals("jpinkman"))
+				.expectComplete();
+	}
+
+//========================================================================================
+
+	// TODO Expect 10 elements then complete and notice how long the test takes.
+	void expect10Elements(Flux<Long> flux) {
+		StepVerifier.create(flux)
+				.expectNextCount(10)
+				.verifyComplete();
+	}
+
+//========================================================================================
+
+	// TODO Expect 3600 elements at intervals of 1 second, and verify quicker than 3600s
+	// by manipulating virtual time thanks to StepVerifier#withVirtualTime, notice how long the test takes
+	void expect3600Elements(Supplier<Flux<Long>> supplier) {
+		StepVerifier.withVirtualTime(supplier)
+				.expectNextCount(3600)
+				.thenAwait(Duration.ofSeconds(1))
+				.expectComplete();
+	}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Mono<User> capitalizeOne(Mono<User> mono) {
+		return mono.map(user -> new User(user.getUsername().toUpperCase(), user.getFirstname().toUpperCase(), user.getLastname().toUpperCase()));
+	}
+
+//========================================================================================
+
+	// TODO Capitalize the users username, firstName and lastName
+	Flux<User> capitalizeMany(Flux<User> flux) {
+		return flux.map(user -> new User(user.getUsername().toUpperCase(), user.getFirstname().toUpperCase(), user.getLastname().toUpperCase()));
+	}
+
+//========================================================================================
+
+	// TODO Capitalize the users username, firstName and lastName using #asyncCapitalizeUser
+	Flux<User> asyncCapitalizeMany(Flux<User> flux) {
+		return flux.flatMap(user -> asyncCapitalizeUser(user));
+	}
+
+	Mono<User> asyncCapitalizeUser(User u) {
+		return Mono.just(new User(u.getUsername().toUpperCase(), u.getFirstname().toUpperCase(), u.getLastname().toUpperCase()));
+	}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+Flux<User> mergeFluxWithInterleave(Flux<User> flux1, Flux<User> flux2) {
+
+		return Flux.merge(flux1, flux2);
+	}
+
+//========================================================================================
+
+	// TODO Merge flux1 and flux2 values with no interleave (flux1 values and then flux2 values)
+	Flux<User> mergeFluxWithNoInterleave(Flux<User> flux1, Flux<User> flux2) {
+
+		return Flux.mergeSequential(flux1, flux2);
+	}
+
+//========================================================================================
+
+	// TODO Create a Flux containing the value of mono1 then the value of mono2
+	Flux<User> createFluxFromMultipleMono(Mono<User> mono1, Mono<User> mono2) {
+
+		return mono1.concatWith(mono2);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
